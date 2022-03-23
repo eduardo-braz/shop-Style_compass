@@ -30,12 +30,12 @@ public class UserFormDTO {
     @NotNull(message = "Campo CPF não pode ser nulo") @NotBlank(message = "Campo CPF não pode ser vazio")
     @CPF(message = "CPF Invalido")
     @Pattern(regexp = "[0-9]{3}.[0-9]{3}.[0-9]{3}-[0-9]{2}",
-            message = "Formato invalido, o formato deve ser do tipo xxx.xxx.xxx-xx")
+            message = "Formato inválido, o formato deve ser do tipo xxx.xxx.xxx-xx")
     private String cpf;
     @JsonFormat(pattern = "dd/MM/yyyy")
     @Past(message = "Data inválida")
     private LocalDate birthdate;
-    @Email(message = "Email invalido")
+    @Email(message = "Email inválido")
     private String email;
     @Size(min = 8, message = "A senha precisa de no mínimo 8 caracteres")
     private String password;
