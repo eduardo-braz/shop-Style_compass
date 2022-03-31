@@ -16,12 +16,11 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/v1/variations")
-public class VariationController implements VariationControllerInterface {
+public class VariationController {
 
     @Autowired
     private VariationService variationService;
 
-    @Override
     @PostMapping
     public ResponseEntity<VariationDTO> save(@RequestBody @Valid VariationFormDTO form)
             throws InvalidOperationException {
@@ -29,7 +28,6 @@ public class VariationController implements VariationControllerInterface {
         return new ResponseEntity<>(saved.get(), HttpStatus.CREATED);
     }
 
-    @Override
     @PutMapping("{id}")
     public ResponseEntity<VariationDTO> update(@RequestBody @Valid VariationFormDTO form, @PathVariable String id)
             throws InvalidOperationException {
@@ -37,13 +35,11 @@ public class VariationController implements VariationControllerInterface {
         return new ResponseEntity<>(updated, HttpStatus.CREATED);
     }
 
-    @Override
     @DeleteMapping("{id}")
     public ResponseEntity<VariationDTO> delete(@PathVariable String id) {
         return new ResponseEntity<>(this.variationService.delete(id));
     }
 
-    @Override
     @GetMapping("{id}")
     public ResponseEntity<ProductDTO> findProductByIdVariation(@PathVariable String id) throws NotFoundException {
         return new ResponseEntity<>(this.variationService.findById(id),
