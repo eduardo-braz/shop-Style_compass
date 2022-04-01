@@ -18,6 +18,7 @@ public class User {
     private Long id;
     private String firstName;
     private String lastName;
+    @Enumerated(EnumType.STRING)
     private Sex sex;
     private String cpf;
     private LocalDate birthdate;
