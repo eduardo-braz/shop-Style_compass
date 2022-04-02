@@ -1,6 +1,5 @@
 package com.compass.ms.catalog.DTOs;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
