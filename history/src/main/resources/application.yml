@@ -1,0 +1,20 @@
+server:
+  port: 8084
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+
+spring:
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: admin
+    password: admin
+  data:
+    mongodb:
+      uri: mongodb://127.0.0.1:27017/fastTrack
