@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.server.ResponseStatusException;
 
 
 import javax.validation.UnexpectedTypeException;
@@ -46,6 +47,11 @@ public class CatalogExceptionHandler {
         String field = message.substring(message.indexOf("'")+1,message.length()-1);
         ResponseError responseError = new ResponseError(field, message);
         return new ResponseEntity<>(responseError.toString(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<?> responseStatusException(ResponseStatusException e){
+        return new ResponseEntity<>(e.getReason(), e.getStatus());
     }
 
 
