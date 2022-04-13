@@ -2,17 +2,13 @@ package com.compass.ms.controller;
 
 import com.compass.ms.DTO.UserDTO;
 import com.compass.ms.DTO.UserFormDTO;
-import com.compass.ms.entity.Sex;
 import com.compass.ms.models.UserInstance;
 import com.compass.ms.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import javafx.util.converter.LocalDateStringConverter;
-import org.json.JSONException;
 import org.junit.Assert;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,15 +17,13 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.web.servlet.*;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.time.LocalDate;
-
-import org.json.JSONObject;
 
 @ExtendWith(MockitoExtension.class)
 @WebMvcTest(UserController.class)
