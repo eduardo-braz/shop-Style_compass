@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -23,10 +25,15 @@ public class HistoryServiceImpl implements HistoryService{
 
     @Override
     public HistoricDTO getHistoric(Long idUser) {
-        Optional<Historic> found = this.historyRepository.findByUserId(idUser);
-        if (found.isPresent())
-            return modelMapper.map(found.get(), HistoricDTO.class);
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        List<Historic> found = this.historyRepository.findByUserId(idUser);
+        if (found.isEmpty())
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        HistoricDTO historic = modelMapper.map(found.get(0), HistoricDTO.class);
+        historic.getPurchases().clear();
+        found.stream().forEach(purchase -> {
+            historic.getPurchases().add(purchase.getPurchases().get(0));
+        });
+        return historic;
     }
 
 
