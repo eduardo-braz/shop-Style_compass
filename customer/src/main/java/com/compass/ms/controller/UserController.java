@@ -1,5 +1,7 @@
 package com.compass.ms.controller;
 
+import com.compass.ms.DTO.LoginFormDTO;
+import com.compass.ms.DTO.TokenDTO;
 import com.compass.ms.DTO.UserDTO;
 import com.compass.ms.DTO.UserFormDTO;
 import com.compass.ms.service.UserService;
@@ -24,6 +26,13 @@ public class UserController implements UserControllerInterface{
     public ResponseEntity<UserDTO> save(@RequestBody @Valid UserFormDTO body){
         return new ResponseEntity<>(this.userService.save(body),
                 HttpStatus.CREATED);
+    }
+
+    @Override
+    @PostMapping("/login")
+    public ResponseEntity<TokenDTO> login(@RequestBody @Valid LoginFormDTO body) {
+        return new ResponseEntity<>(this.userService.login(body),
+                HttpStatus.OK);
     }
 
     @Override

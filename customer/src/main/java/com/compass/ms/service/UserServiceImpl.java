@@ -1,14 +1,20 @@
 package com.compass.ms.service;
 
+import com.compass.ms.DTO.LoginFormDTO;
+import com.compass.ms.DTO.TokenDTO;
 import com.compass.ms.DTO.UserDTO;
 import com.compass.ms.DTO.UserFormDTO;
 import com.compass.ms.entity.User;
 import com.compass.ms.exceptions.EntityExceptionResponse;
 import com.compass.ms.repository.UserRepository;
+import com.compass.ms.security.TokenService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -23,6 +29,28 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     ModelMapper modelMapper;
+
+    @Autowired
+    private TokenService tokenService;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Override
+    public TokenDTO login(LoginFormDTO body) {
+        Optional<User> findUser = this.userRepository.findByEmail(body.getEmail());
+        if (findUser.isPresent()){
+            try {
+                Authentication authentication = authenticationManager.authenticate(
+                        new UsernamePasswordAuthenticationToken( body.getEmail(), body.getPassword() ));
+                String token = tokenService.generate(authentication);
+                return new TokenDTO(token, "Bearer");
+            } catch (AuthenticationException e) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+            }
+        }
+        throw new EntityExceptionResponse(HttpStatus.NOT_FOUND,"Email não encontrado.");
+    }
 
     @Override
     public UserDTO save(UserFormDTO formDTO) {
