@@ -1,5 +1,7 @@
 package com.compass.ms.controller;
 
+import com.compass.ms.DTO.LoginFormDTO;
+import com.compass.ms.DTO.TokenDTO;
 import com.compass.ms.DTO.UserDTO;
 import com.compass.ms.DTO.UserFormDTO;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
@@ -45,6 +47,19 @@ public interface UserControllerInterface {
     @PostMapping("/users")
     @Transactional
     ResponseEntity<UserDTO> save(@RequestBody @Valid UserFormDTO body);
+
+    @RequestBody(content = @Content(schema = @Schema(implementation = UserDTO.class), mediaType = "application/json",
+            examples = @ExampleObject(value = exampleForm)))
+    @Operation(summary = "Login de usuário", description = "Loga um usuário")
+    @ApiResponse(responseCode = "200", description = "Usuário logado com sucesso",
+            content = @Content(schema = @Schema(implementation = UserDTO.class), mediaType = "application/json",
+                    examples = @ExampleObject(value = exampleForm)))
+    @ApiResponse(responseCode = "400", description = "E-mail e/ou password inválido(s)", content =
+    @Content(mediaType = "aplication/json",
+            examples = @ExampleObject(value = responseBodyBadRequest)))
+    @PostMapping("/login")
+    @Transactional
+    ResponseEntity<TokenDTO> login(@RequestBody @Valid LoginFormDTO body);
 
 
 

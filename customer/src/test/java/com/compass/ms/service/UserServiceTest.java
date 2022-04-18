@@ -13,12 +13,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
@@ -33,9 +31,6 @@ public class UserServiceTest {
     @MockBean
     private UserRepository userRepository;
 
-    @Autowired
-    private ModelMapper modelMapper;
-
     @Mock
     private UserFormDTO userFormDTO;
 
@@ -48,7 +43,6 @@ public class UserServiceTest {
     @Test
     @DisplayName("Deve salvar usuário")
     public void shouldHaveSaveUser() throws Exception {
-
         Mockito.when(userService.save(userFormDTO)).thenReturn(userDTO);
         Mockito.when(userRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(user));
 
@@ -75,26 +69,23 @@ public class UserServiceTest {
     @Test
     @DisplayName("Deve buscar usuário existe no BD")
     public void shouldHaveFindUser() throws Exception {
-        ResponseEntity<UserDTO> responseEntity = new ResponseEntity<>(userDTO, HttpStatus.OK);
-        Mockito.when(userService.findId(1L)).thenReturn(responseEntity);
+        Mockito.when(userService.findId(1L)).thenReturn(userDTO);
 
-        ResponseEntity<UserDTO> found = userService.findId(1L);
+        UserDTO found = userService.findId(1L);
 
-        Assert.assertEquals(responseEntity.getStatusCode().value(), found.getStatusCode().value());
-        Assert.assertEquals(responseEntity.getBody(), found.getBody());
+        Assert.assertEquals(found, userDTO);
     }
 
     /* Confirmar de método está realmente fazendo testes de maneira correta */
     @Test
     @DisplayName("Não encontra usuário inexistente no BD")
     public void mustNotFindUser() throws Exception {
-        ResponseEntity<UserDTO> responseEntity = new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        Mockito.when(userService.findId(1L)).thenReturn(responseEntity);
-
-        ResponseEntity<UserDTO> found = userService.findId(1L);
-
-        Assert.assertEquals(responseEntity.getStatusCode().value(), found.getStatusCode().value());
-        Assert.assertEquals(responseEntity.getBody(), found.getBody());
+        Mockito.when(userService.findId(1L)).thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
+        try {
+            UserDTO found = userService.findId(1L);
+            Assert.assertNotEquals(found, userDTO);
+        } catch (Exception e) {}
+        Assert.assertThrows(ResponseStatusException.class, () -> userService.findId(1L));
     }
 
     /* Ver como devem ser os testes para o metodo update */

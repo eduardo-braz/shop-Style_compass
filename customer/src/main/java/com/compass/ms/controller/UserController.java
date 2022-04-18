@@ -1,5 +1,7 @@
 package com.compass.ms.controller;
 
+import com.compass.ms.DTO.LoginFormDTO;
+import com.compass.ms.DTO.TokenDTO;
 import com.compass.ms.DTO.UserDTO;
 import com.compass.ms.DTO.UserFormDTO;
 import com.compass.ms.service.UserService;
@@ -22,15 +24,23 @@ public class UserController implements UserControllerInterface{
     @PostMapping("/users")
     @Transactional
     public ResponseEntity<UserDTO> save(@RequestBody @Valid UserFormDTO body){
-        UserDTO userDto = this.userService.save(body);
-        return new ResponseEntity<>(userDto, HttpStatus.CREATED);
+        return new ResponseEntity<>(this.userService.save(body),
+                HttpStatus.CREATED);
+    }
+
+    @Override
+    @PostMapping("/login")
+    public ResponseEntity<TokenDTO> login(@RequestBody @Valid LoginFormDTO body) {
+        return new ResponseEntity<>(this.userService.login(body),
+                HttpStatus.OK);
     }
 
     @Override
     @GetMapping("/users/{id}")
     @Transactional
     public ResponseEntity<UserDTO> findId(@PathVariable Long id){
-        return this.userService.findId(id);
+        return new ResponseEntity<>(this.userService.findId(id),
+                HttpStatus.OK);
     }
 
 
@@ -38,7 +48,8 @@ public class UserController implements UserControllerInterface{
     @PutMapping("/users/{id}")
     @Transactional
     public ResponseEntity<UserDTO> update(@RequestBody @Valid UserFormDTO body, @PathVariable Long id){
-        return this.userService.update(body, id);
+        return new ResponseEntity<>(this.userService.update(body, id),
+                HttpStatus.OK);
     }
 
 }

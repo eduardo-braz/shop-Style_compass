@@ -1,0 +1,18 @@
+server:
+  port: 8081
+
+springdoc:
+  swagger-ui.path: /swagger-docs.html
+
+eureka:
+  client:
+  register-with-eureka: true
+  fetch-registry: true
+  service-url:
+    defaultZone: http://localhost:8761/eureka
+
+bff:
+  jwt:
+    secret: '(aR]e)rh%m3M$NU9QmGHS|G^:56K|ri((0#NkUuP8OdndyNtCU2WT8QRf,dff@NOd{c$M,^.CZag,n{{9sM^SdMzRq^xTJ#xBFcN}YB>xbdl&Tdp$pk:-yyCFs0Z3d,4jQ)do-ZDL3p},)j2Z-1JjPMp9$&dI4:r+*+b2Le%%-733HX]};EcER)%>zIETGxG;ihqu@Xax^^RDRM>HQZMiI[f7Ak}H:|<hgo]J@T76P?9hD6pT>23Et|#uk62j50'
+    expiration: 3600000
+  api-name: 'Shop Style'

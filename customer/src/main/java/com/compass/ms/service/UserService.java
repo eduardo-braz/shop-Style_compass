@@ -1,16 +1,18 @@
 package com.compass.ms.service;
 
+import com.compass.ms.DTO.LoginFormDTO;
+import com.compass.ms.DTO.TokenDTO;
 import com.compass.ms.DTO.UserDTO;
 import com.compass.ms.DTO.UserFormDTO;
-import org.springframework.http.ResponseEntity;
-
 
 public interface UserService {
 
+    TokenDTO login(LoginFormDTO body);
+
     UserDTO save(UserFormDTO formDTO);
 
-    ResponseEntity<UserDTO> findId(Long id);
+    UserDTO findId(Long id);
 
-    ResponseEntity<UserDTO> update(UserFormDTO formDTO, Long id);
+    UserDTO update(UserFormDTO formDTO, Long id);
 
 }
