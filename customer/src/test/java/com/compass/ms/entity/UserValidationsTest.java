@@ -244,11 +244,12 @@ public class UserValidationsTest {
     @Test
     @DisplayName("Invalida Email incorreto")
     public void shouldInvalidateEmailBecausePattern() throws Exception {
-        String emailTest = "maria.com";
+        String emailTest = "mariacom";
         userFormDTO.setEmail(emailTest);
 
         ResultMatcher resultMatcher = MockMvcResultMatchers.status().isBadRequest();
         MvcResult mvcResult = performController(resultMatcher);
+
         Assert.assertTrue(
                 mvcResult.getResolvedException()
                         .getLocalizedMessage()

@@ -9,7 +9,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
@@ -29,26 +31,22 @@ public class UserServiceImpl implements UserService {
             throw new EntityExceptionResponse(HttpStatus.BAD_REQUEST,
                     "Email " + formDTO.getEmail() + " existente no banco");
         } else {
+            formDTO.setPassword(new BCryptPasswordEncoder().encode(formDTO.getPassword()));
             User user = this.userRepository.save(modelMapper.map(formDTO, User.class));
             return modelMapper.map(user, UserDTO.class);
         }
     }
 
     @Override
-    public ResponseEntity<UserDTO> findId(Long id) {
+    public UserDTO findId(Long id) {
         Optional<User> user = this.userRepository.findById(id);
-        if (user.isPresent()) {
-            return new ResponseEntity<>(
-                    modelMapper.map(user.get(), UserDTO.class),
-                    HttpStatus.OK
-            );
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        if (user.isPresent())
+            return modelMapper.map(user.get(), UserDTO.class);
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
 
     @Override
-    public ResponseEntity<UserDTO> update(UserFormDTO formDTO, Long id) {
+    public UserDTO update(UserFormDTO formDTO, Long id) {
         Optional<User> user = this.userRepository.findById(id);
         if (user.isPresent()) {
             Optional<User> validUser = this.userRepository.findByEmailAndId(formDTO.getEmail(), id);
@@ -66,10 +64,10 @@ public class UserServiceImpl implements UserService {
             user.get().setLastName(formDTO.getLastName());
             user.get().setSex(formDTO.getSex());
             // Atualizando senha
-            user.get().setPassword(formDTO.getPassword());
-            return new ResponseEntity<>(HttpStatus.OK);
+            user.get().setPassword(new BCryptPasswordEncoder().encode(formDTO.getPassword()));
+            return modelMapper.map(user.get(), UserDTO.class);
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
     }
 

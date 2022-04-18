@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -81,9 +82,8 @@ public class UserControllerTest {
     @Test
     @DisplayName("Busca usuario existente no banco (GET)")
     public void shouldHaveStatusOKWhenFindIdInvoked() throws Exception {
-        ResponseEntity<UserDTO> userDTOFound = new ResponseEntity<>(userDTO, HttpStatus.OK);
 
-        Mockito.when(userService.findId(1L)).thenReturn(userDTOFound);
+        Mockito.when(userService.findId(1L)).thenReturn(userDTO);
 
         mockMvc.perform( MockMvcRequestBuilders
                         .get("/v1/users/{id}", 1)
@@ -91,15 +91,14 @@ public class UserControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
 
-        Assert.assertEquals(userDTOFound.getBody(),userDTO);
     }
 
     @Test
     @DisplayName("Retorna NOT FOUND ao buscar usuario inexistente")
     public void shouldHaveStatusNotFoundWhenDontFindId() throws Exception {
-        ResponseEntity<UserDTO> userDTOFound = new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
-        Mockito.when(userService.findId(1L)).thenReturn(userDTOFound);
+
+        Mockito.when(userService.findId(1L)).thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
 
         mockMvc.perform( MockMvcRequestBuilders
                         .get("/v1/users/{id}", 1)
@@ -107,7 +106,6 @@ public class UserControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isNotFound())
                 .andReturn();
 
-        Assert.assertNotEquals(userDTOFound.getBody(),userDTO);
     }
 
     @Test
@@ -137,24 +135,19 @@ public class UserControllerTest {
                                 .status().isBadRequest());
     }
 
+    /* o método abaixo está sempre retornando status 200, mas deveria ser 404 */
     @Test
     @DisplayName("Retorna NOT FOUND ao tentar cadastrar usuário com ID inválido")
     public void shouldHaveNotFoundWhenUpdateInvoked() throws Exception {
-        ResponseEntity<UserDTO> userDTOFound = new ResponseEntity<>(HttpStatus.NOT_FOUND);
-
-        Mockito.when(userService.findId(-1L)).thenReturn(userDTOFound);
+        Long id = -1L;
+        Mockito.when(userService.findId(id)).thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
 
         userDTO.setId(-1L);
         mockMvc.perform( MockMvcRequestBuilders
-                        .put("/v1/users/{id}", -1L)
+                        .put("/v1/users/{id}", id)
                         .content(objectMapper.writeValueAsString(userFormDTO))
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(
-                        MockMvcResultMatchers
-                                .status().isNotFound())
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
                 .andReturn();
-
-        //Assert.assertNotEquals(userDTOFound.getBody(),userDTO);
-
     }
 }
